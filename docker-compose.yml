@@ -21,7 +21,7 @@
 
 services:
   db:
-    image: postgres:13-alpine
+    image: postgres:16-alpine
     volumes:
       - db_python:/var/lib/postgresql/data
     environment:
