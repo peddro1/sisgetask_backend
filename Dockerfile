@@ -48,7 +48,7 @@
 # # Executa o arquivo scripts/commands.sh
 # CMD ["commands.sh"]
 
-FROM python:3.9-alpine3.13
+FROM python:3.13-alpine
 
 COPY ./requirements.txt /tmp/requirements.txt
 COPY ./sisgetask_back /sisgetask_back
