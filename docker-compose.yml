@@ -1,54 +1,27 @@
-# services:
-#   django:
-#     build:
-#       context: .
-#     ports:
-#       - "8000:8000"
-#     volumes:
-#       - ./sisgetask_back:/sisgetask_back
-#       - ./data/web/static:/data/web/static/
-#       - ./data/web/media:/data/web/media/
-#     env_file:
-#       - ./dotenv_files/.env
-#     depends_on:
-#       - postgres
-#   postgres:
-#     image: postgres:16-alpine
-#     volumes:
-#       - ./data/postgres/data:/var/lib/postgresql/data/
-#     env_file:
-#       - ./dotenv_files/.env
-
 services:
-  db:
-    image: postgres:16-alpine
-    volumes:
-      - db_python:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - "5432:5432"
-
-  backend:
+  sisgetask_backend:
+    container_name: sisgetask_backend
     build:
       context: .
     ports:
-      - "8000:8000"
+      - 8000:8000
     volumes:
-        - ./sisgetask_back:/sisgetask_back
-    command: >
-      sh -c "python manage.py makemigrations &&
-             python manage.py migrate &&
-             python manage.py runserver 0.0.0:8000"
-    environment:
-      - DB_HOST=db
-      - DB_NAME=postgres
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
+      - ./sisgetask_backend:/sisgetask_backend
+      - ./data/web/static:/data/web/static/
+      - ./data/web/media:/data/web/media/
+    env_file:
+      - ./dotenv_files/.env
     depends_on:
-      - db
-      
+      - psql
+  psql:
+    container_name: psql
+    image: postgres:16-alpine
+    volumes:
+      - db_sisgetask_backend:/var/lib/postgresql/data
+    env_file:
+      - ./dotenv_files/.env
+    ports:
+      - "5432:5432"
+
 volumes:
-  db_python:
+  db_sisgetask_backend:
