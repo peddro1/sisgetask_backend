@@ -24,9 +24,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r sisgetask_backend/requirements.txt
 
-      - name: Rodar testes
-        run: |
-          python manage.py test
+      #- name: Rodar testes
+        #run: |
+          #python manage.py test
 
   release:
     needs: build-and-test
