@@ -1,0 +1,66 @@
+name: CI/CD - Sisgetask Backend
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Rodar testes
+        run: npm run test
+
+      - name: Gerar build com Parcel
+        run: npm run build
+
+      - name: Salvar artefato da build
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+  release:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Instalar dependências e buildar
+        run: |
+          npm install
+          npm run build
+
+      - name: Login no Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: 🐳 Build da imagem Docker
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/projeto-sisgetask-backend:latest .
+
+      - name: 🚀 Push da imagem para o Docker Hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/projeto-sisgetask-backend:latest
