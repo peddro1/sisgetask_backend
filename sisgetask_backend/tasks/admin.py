@@ -1,5 +1,5 @@
 from django.contrib import admin
-from task.models import Task
+from tasks.models import Task
 
 class TaskAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'description', 'start_date', 'updated_at', 'end_date', 'status')
